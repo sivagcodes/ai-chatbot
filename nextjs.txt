@@ -1,0 +1,28 @@
+import fs from "fs";
+import https from "https";
+
+// Load your CA bundle
+const ca = fs.readFileSync("/path/to/ca_bundle.crt");
+
+// Create HTTPS agent
+const agent = new https.Agent({
+  ca: ca,
+  rejectUnauthorized: true,
+});
+
+// Use fetch with the custom agent
+const response = await fetch("https://internal-llm.company.net/v1/completions", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer dummy-key`, // OpenAI key or placeholder
+  },
+  body: JSON.stringify({
+    model: "gpt-3.5-turbo",
+    messages: [{ role: "user", content: "Hello world" }],
+  }),
+  agent, // Pass the custom agent here
+});
+
+const data = await response.json();
+console.log(data);
